@@ -98,7 +98,7 @@ in {
       nameValuePair "borgbackup-job-${n}" {
         serviceConfig = {
           ProtectSystem = mkForce "full";
-          ExecStartPre = "sleep 30";
+          ExecStartPre = "${pkgs.coreutils}/bin/sleep 30";
         };
       })
     cfg.jobs;
