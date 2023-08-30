@@ -87,6 +87,11 @@ in {
       type = types.attrs;
     };
 
+    sleepTime = mkOption {
+      type = types.nullOr types.int;
+      default = null;
+    };
+
     jobs = mkOption {
       type = types.attrsOf (types.submodule jobOptions);
       default = {};
@@ -97,10 +102,11 @@ in {
 
     systemd.services = mapAttrs' (n: v:
       nameValuePair "borgbackup-job-${n}" {
-        serviceConfig = {
-          ProtectSystem = mkForce "full";
-          ExecStartPre = "${pkgs.coreutils}/bin/sleep 30";
-        };
+        serviceConfig =
+          {
+            ProtectSystem = mkForce "full";
+          }
+          // lib.attrsets.optionalAttrs (cfg.sleepTime != null) {ExecStartPre = "${pkgs.coreutils}/bin/sleep ${toString cfg.sleepTime}";};
       })
     cfg.jobs;
 
